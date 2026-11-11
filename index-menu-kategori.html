@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Game Download</title>
+<style>
+:root{
+  --bg:#0b0d14;
+  --bg-soft:#0f1117;
+  --card:#161a26;
+  --card-hover:#1d2230;
+  --text:#f2f3f7;
+  --muted:#9aa0b4;
+  --accent:#ff4d4d;
+  --accent-2:#ff7a45;
+  --glow:rgba(255,77,77,.45);
+  --line:#262b3c;
+  --radius:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1200px 600px at 10% -10%, rgba(255,77,77,.10), transparent 60%),
+    radial-gradient(1000px 500px at 110% 10%, rgba(45,108,255,.10), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ================= HEADER ================= */
+header{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;gap:14px;
+  padding:14px 20px;
+  background:rgba(15,17,23,.72);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+#burger{
+  background:linear-gradient(135deg,#232838,#181c28);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-size:22px;
+  width:42px;height:42px;
+  border-radius:12px;
+  cursor:pointer;line-height:1;
+  transition:transform .2s, box-shadow .2s, border-color .2s;
+  display:grid;place-items:center;
+}
+#burger:hover{
+  transform:translateY(-2px);
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px rgba(255,77,77,.12), 0 8px 20px rgba(0,0,0,.35);
+}
+#burger:active{transform:scale(.94)}
+header h1{
+  font-size:20px;cursor:pointer;
+  background:linear-gradient(90deg,#fff 30%,var(--accent));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:.3px;
+  transition:filter .2s;
+}
+header h1:hover{filter:brightness(1.25)}
+.header-social{
+  margin-left:auto;display:flex;align-items:center;gap:10px;
+}
+.header-social a{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:40px;padding:9px 13px;border-radius:11px;
+  color:#fff;text-decoration:none;font-size:13px;font-weight:750;
+  border:1px solid rgba(255,255,255,.10);
+  transition:transform .2s,filter .2s,box-shadow .2s;
+}
+.header-social a:hover{transform:translateY(-2px);filter:brightness(1.12)}
+.header-social .youtube{background:linear-gradient(135deg,#ff3434,#c90000);box-shadow:0 5px 16px rgba(255,0,0,.2)}
+.header-social .whatsapp{background:linear-gradient(135deg,#25d366,#128c4b);box-shadow:0 5px 16px rgba(37,211,102,.18)}
+.header-social svg{width:17px;height:17px;flex:none}
+
+/* ================= MENU DRAWER ================= */
+#overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(3px);
+  display:none;z-index:60;
+  opacity:0;transition:opacity .3s;
+}
+#overlay.open{display:block;opacity:1}
+#drawer{
+  position:fixed;top:0;left:-320px;
+  width:290px;height:100%;
+  background:linear-gradient(180deg,#171b28,#0f1219);
+  z-index:70;padding:24px 20px;
+  transition:left .35s cubic-bezier(.4,0,.2,1);
+  border-right:1px solid var(--line);
+  box-shadow:20px 0 60px rgba(0,0,0,.5);
+}
+#drawer.open{left:0}
+#drawer h2{
+  margin-bottom:22px;font-size:18px;
+  display:flex;align-items:center;gap:8px;
+  color:#fff;
+}
+#drawer h2::after{
+  content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,var(--line),transparent);
+}
+#drawer a{
+  display:block;padding:13px 16px;
+  margin-bottom:10px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#25d366,#128c4b);
+  color:#fff;text-decoration:none;font-weight:700;
+  box-shadow:0 6px 18px rgba(37,211,102,.25);
+  transition:transform .2s, box-shadow .2s;
+}
+#drawer a:hover{transform:translateX(4px);box-shadow:0 8px 24px rgba(37,211,102,.4)}
+#drawer button.home{
+  width:100%;text-align:left;
+  padding:13px 16px;margin-bottom:10px;
+  border-radius:12px;
+  background:var(--card);
+  border:1px solid var(--line);
+  color:var(--text);font-size:16px;cursor:pointer;
+  transition:background .2s, transform .2s, border-color .2s;
+}
+#drawer button.home:hover{
+  background:var(--card-hover);
+  border-color:var(--accent);
+  transform:translateX(4px);
+}
+
+/* ================= WRAP ================= */
+.wrap{max-width:1920px;margin:0 auto}
+
+/* ================= SLIDER ================= */
+.slider{
+  position:relative;
+  width:calc(100% - 32px);
+  max-width:1200px;
+  margin:20px auto 0;
+  aspect-ratio:3/1;
+  overflow:hidden;
+  border-radius:22px;
+  background:#151927;
+  border:1px solid var(--line);
+  box-shadow:0 20px 60px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.04);
+  touch-action:pan-y;
+}
+.track{
+  display:flex;height:100%;
+  transition:transform .7s cubic-bezier(.4,0,.2,1);
+}
+.slide{
+  min-width:100%;height:100%;
+  background:#2a2e3d center/cover no-repeat;
+  position:relative;display:flex;align-items:flex-end;
+  overflow:hidden;
+}
+.slide::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.8));
+  pointer-events:none;
+}
+.slide div{
+  position:relative;z-index:2;
+  padding:20px 26px;width:100%;
+  animation:fadeUp .7s ease both;
+}
+.slide h2{
+  font-size:clamp(16px,3vw,38px);
+  text-shadow:0 4px 20px rgba(0,0,0,.7);
+  letter-spacing:.3px;
+}
+.slide p{
+  color:#e1e4ee;font-size:clamp(11px,1.5vw,18px);
+  margin-top:6px;text-shadow:0 2px 10px rgba(0,0,0,.7);
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* dots */
+.dots{
+  position:absolute;bottom:14px;right:18px;
+  display:flex;gap:8px;z-index:3;
+}
+.dots i{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.35);
+  cursor:pointer;
+  transition:width .3s, background .3s, box-shadow .3s;
+}
+.dots i.on{
+  width:26px;border-radius:6px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  box-shadow:0 0 12px var(--glow);
+}
+
+/* ================= SECTION ================= */
+.section{padding:28px 20px}
+.section h3{
+  margin-bottom:18px;font-size:21px;
+  display:flex;align-items:center;gap:10px;
+}
+.section h3::after{
+  content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,var(--line),transparent);
+}
+
+/* ================= GRID & CARD ================= */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:18px;
+}
+.card{
+  position:relative;
+  background:linear-gradient(180deg,var(--card),#11141e);
+  border-radius:var(--radius);
+  overflow:hidden;
+  border:1px solid var(--line);
+  cursor:pointer;
+  transition:transform .3s cubic-bezier(.4,0,.2,1), box-shadow .3s, border-color .3s;
+  will-change:transform;
+}
+.card::before{
+  content:"";position:absolute;inset:0;
+  border-radius:var(--radius);
+  padding:1px;
+  background:linear-gradient(135deg,rgba(255,77,77,.6),transparent 40%,transparent 60%,rgba(45,108,255,.6));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:0;transition:opacity .35s;
+  pointer-events:none;
+  z-index:3;
+}
+.card:hover{
+  transform:translateY(-8px) scale(1.015);
+  box-shadow:0 24px 50px rgba(0,0,0,.55), 0 0 0 1px rgba(255,77,77,.15);
+  border-color:transparent;
+}
+.card:hover::before{opacity:1}
+.card .img{
+  aspect-ratio:1/1;
+  background:#2a2e3d center/cover no-repeat;
+  transition:transform .5s ease, filter .5s ease;
+}
+.card:hover .img{transform:scale(1.08);filter:brightness(1.1)}
+.card .t{padding:12px 12px 14px;position:relative;z-index:2;display:flex;flex-direction:column;flex:1;min-width:0}
+.card .t b{min-height:22px}
+.card .t span{display:block;min-height:18px}
+.card .t button{margin-top:auto;margin-top:10px;flex:none}
+.card .t b{
+  display:block;font-size:15px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .2s;
+}
+.card:hover .t b{color:var(--accent)}
+.card .t span{color:var(--muted);font-size:12px}
+.card button{
+  margin-top:10px;width:100%;padding:9px;
+  border:0;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:#fff;font-weight:700;cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:transform .2s, box-shadow .25s;
+  letter-spacing:.3px;
+}
+.card button::after{
+  content:"";position:absolute;top:0;left:-120%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
+  transform:skewX(-20deg);
+  transition:left .6s ease;
+}
+.card:hover button::after{left:130%}
+.card button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 22px var(--glow);
+}
+.card button:active{transform:scale(.97)}
+
+/* ================= DETAIL ================= */
+#detail{
+  display:none;
+  max-width:900px;
+  margin:0 auto;
+  padding:24px 16px 40px;
+  animation:fadeUp .45s ease both;
+}
+.back{
+  background:var(--card);
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:9px 16px;border-radius:10px;cursor:pointer;
+  margin-bottom:20px;
+  font-size:14px;
+  transition:transform .2s, background .2s, border-color .2s;
+}
+.back:hover{
+  background:var(--card-hover);
+  border-color:var(--accent);
+  transform:translateX(-3px);
+}
+.d-top{display:flex;gap:24px;flex-wrap:wrap}
+.d-img{
+  width:260px;max-width:100%;
+  aspect-ratio:1/1;
+  border-radius:20px;
+  background:#2a2e3d center/cover no-repeat;
+  border:1px solid var(--line);
+  box-shadow:0 18px 40px rgba(0,0,0,.5);
+  transition:transform .4s ease;
+}
+.d-img:hover{transform:scale(1.03) rotate(-1deg)}
+.d-info{flex:1;min-width:260px}
+.d-info h2{
+  margin-bottom:16px;font-size:26px;
+  background:linear-gradient(90deg,#fff,var(--accent));
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+table{width:100%;border-collapse:collapse}
+td{
+  padding:11px 6px;
+  border-bottom:1px solid var(--line);
+  font-size:15px;
+  transition:background .2s;
+}
+tr:hover td{background:rgba(255,255,255,.03)}
+td:first-child{color:var(--muted);width:40%}
+.desc{
+  margin:22px 0;line-height:1.7;color:#cfd3e0;
+}
+.dl,.extra{
+  display:block;text-align:center;
+  padding:15px;border-radius:14px;
+  color:#fff;font-size:18px;font-weight:800;
+  text-decoration:none;
+  position:relative;overflow:hidden;
+  transition:transform .25s, box-shadow .3s;
+  letter-spacing:.3px;
+}
+.dl{
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  box-shadow:0 10px 30px rgba(255,77,77,.3);
+}
+.extra{
+  background:linear-gradient(135deg,#2d6cff,#1a4fd6);
+  margin-top:12px;
+  box-shadow:0 10px 30px rgba(45,108,255,.3);
+}
+.dl::after,.extra::after{
+  content:"";position:absolute;top:0;left:-120%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  transform:skewX(-20deg);
+  transition:left .7s ease;
+}
+.dl:hover::after,.extra:hover::after{left:130%}
+.dl:hover,.extra:hover{transform:translateY(-3px)}
+.dl:hover{box-shadow:0 16px 40px rgba(255,77,77,.45)}
+.extra:hover{box-shadow:0 16px 40px rgba(45,108,255,.45)}
+.dl:active,.extra:active{transform:scale(.98)}
+
+/* ================= FOOTER ================= */
+footer{
+  text-align:center;color:var(--muted);
+  padding:32px 24px;font-size:13px;
+  border-top:1px solid var(--line);
+  margin-top:20px;
+}
+
+/* ================= SCROLLBAR ================= */
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:#0b0d14}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#2a3040,#1a1e2a);
+  border-radius:8px;border:2px solid #0b0d14;
+}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+/* ================= CATEGORY NAV ================= */
+.category-nav{
+  width:calc(100% - 32px);max-width:1200px;margin:18px auto 0;
+  display:flex;gap:10px;align-items:center;overflow-x:auto;
+  padding:8px;border:1px solid var(--line);border-radius:15px;
+  background:rgba(15,17,23,.78);scrollbar-width:thin;
+}
+.category-nav button{
+  flex:1 0 auto;min-width:130px;padding:12px 18px;border:1px solid var(--line);
+  border-radius:11px;background:var(--card);color:var(--muted);
+  font-size:13px;font-weight:800;letter-spacing:.35px;cursor:pointer;
+  transition:background .2s,border-color .2s,color .2s,transform .2s;
+}
+.category-nav button:hover{transform:translateY(-2px);border-color:var(--accent);color:#fff}
+.category-nav button.active{
+  color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  border-color:transparent;box-shadow:0 7px 20px var(--glow);
+}
+.empty-category{grid-column:1/-1;text-align:center;padding:35px 15px;color:var(--muted);
+  background:var(--card);border:1px dashed var(--line);border-radius:14px}
+@media(max-width:600px){
+  .category-nav{width:calc(100% - 24px);gap:7px;margin-top:14px;padding:6px}
+  .category-nav button{min-width:112px;padding:11px 13px;font-size:12px}
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width:600px){
+  header{padding:10px 12px;gap:10px}
+  header h1{font-size:16px}
+  .header-social{gap:6px}
+  .header-social a{min-height:36px;padding:8px 9px;font-size:0;gap:0}
+  .header-social svg{width:18px;height:18px}
+
+  .slider{width:calc(100% - 24px);margin-top:14px;border-radius:16px}
+  .section{padding:22px 14px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:14px}
+  .d-img{width:100%}
+  .d-info h2{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <button id="burger" aria-label="Menu">&#9776;</button>
+  <h1 id="siteName"></h1>
+  <div class="header-social" aria-label="Media sosial">
+    <a class="youtube" id="youtubeHeader" href="#" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg>
+      <span>YouTube</span>
+    </a>
+    <a class="whatsapp" id="waHeader" href="#" target="_blank" rel="noopener" aria-label="Saluran WhatsApp" title="Saluran WhatsApp">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.6 4.2 1.7 6L0 24l6.4-1.7a11.8 11.8 0 0 0 5.7 1.5h.1c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.2-3.5-8.5ZM12.1 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.3-.4a9.8 9.8 0 1 1 8.5 4.7Zm5.4-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.8-.7-1.4-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.1-.2-.5-.5-.4-.7-.4h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.1-1.4-.1-.2-.3-.2-.6-.4Z"/></svg>
+      <span>WhatsApp</span>
+    </a>
+  </div>
+</header>
+
+<!-- MENU KATEGORI -->
+<nav class="category-nav" aria-label="Kategori konten">
+  <button type="button" class="active" data-category="APP GAME">🎮 APP GAME</button>
+  <button type="button" data-category="TOOLS FF">🛠️ TOOLS FF</button>
+  <button type="button" data-category="APLIKASI GGMP">🛡️ APLIKASI GGMP</button>
+</nav>
+
+<div id="overlay"></div>
+<nav id="drawer">
+  <h2>Menu</h2>
+  <button class="home" id="homeBtn">Beranda</button>
+  <a id="waLink" target="_blank" rel="noopener">Ikuti Saluran WhatsApp</a>
+</nav>
+
+<main class="wrap">
+  <!-- HALAMAN UTAMA -->
+  <div id="home">
+    <div class="slider" id="slider"><div class="track" id="track"></div><div class="dots" id="dots"></div></div>
+    <div class="section">
+      <h3>⭐Web Tools Terpercaya</h3>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+
+  <!-- HALAMAN DETAIL -->
+  <div id="detail">
+    <button class="back" id="backBtn">← Kembali</button>
+    <div class="d-top">
+      <div class="d-img" id="dImg"></div>
+      <div class="d-info">
+        <h2 id="dName"></h2>
+        <table id="dTable"></table>
+      </div>
+    </div>
+    <p class="desc" id="dDesc"></p>
+    <a class="dl" id="dLink" target="_blank" rel="noopener">⬇ Download Game</a>
+    <div id="dExtra"></div>
+  </div>
+</main>
+<footer id="foot"></footer>
+
+<script>
+/* ============================================================
+   EDIT DI SINI SAJA
+   ============================================================ */
+const SITE_NAME  = "GAMINGRDW.ID";
+
+// GANTI LINK SOSIAL MEDIA DI BAWAH INI
+const YOUTUBE_LINK = "https://www.youtube.com/@ridwan.gamingid";
+const WA_LINK      = "https://whatsapp.com/channel/GANTI_LINK_SALURAN_WA";
+
+// Banner geser otomatis. Ukuran gambar 1200x400 px.
+const BANNERS = [
+  { image: "bener2.png.jpg", title: "Download Game Gratis", sub: "Pilih game, lihat detail, lalu download" },
+  { image: "bener4.png.jpg", title: "Game Terbaru", sub: "Update setiap hari" },
+  { image: "bener3.png.png", title: "Ikuti Saluran WhatsApp", sub: "Biar tidak ketinggalan info game" }
+];
+const BANNER_DELAY = 4000;
+
+const GAMES = [
+  // ================= APLIKASI GGMP =================
+  {
+    name: "ggmp x madrit",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "54 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/pl0dqv2d4fo9axa/GGMP_X_REAL_MADRID.apk/file",
+  },
+  {
+    name: "ggmp x blustak 9.7",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "30 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/abahq53y9s1m5tl/GGMP_X_BLUSTAK_9.7_.apk/file",
+  },
+  {
+    name: "ggmp x obito",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "76 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/x4mom1h2bjd6ims/GGMP_X_OBITO.apk/file",
+  },
+  {
+    name: "ggmp x fldo",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "47 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/9757b7367c5d9s3/GGMP_X_FALDO.apk/file",
+  },
+  {
+    name: "ggmp x ruok",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "46 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/pe0rdhyu29oywki/GGMP_RUOK_BY_ATHEL.apk/file",
+  },
+  {
+    name: "ggmp x naruto",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "43 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/d7etq0i83xndp3p/GG_3_X_NARUTO.apk/file",
+  },
+  {
+    name: "ggmp 2 premium",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "37 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/mdf0tpn86mky1ao/GG_Mouse_Pro2_premium.apk/file",
+  },
+  {
+    name: "ggmp x 3 premium",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "16 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/1r2tucsn1rsp10u/GGMP_3_PREM.apk/file",
+  },
+  {
+    name: "ggmp x blustak 9.5",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "64 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/fk0kebz0vb17byx/GGMP_X_BLUSTAK_9.5.apk/file",
+  },
+  {
+    name: "ggmp x blustak 9.6",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "70 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/jwivskmv94hi7w0/GGMP_X_BLUSTAK_V9.6.apk/file",
+  },
+  {
+    name: "ggmp x blustak v9",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "37 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/0qy96t8a7witv9f/GGMP_X_BLUSTAK_V9.apk/file",
+  },
+  {
+    name: "ggmp x gojo",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "65 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "https://www.mediafire.com/file/srbz333a0z59a4n/GGMP_X_GOJO.apk/file",
+  },
+  {
+    name: "ggmp x ...",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "30 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "MASUKKAN_LINK_MEDIAFIRE_GGMP",
+  },
+  {
+    name: "ggmp x ...",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "30 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "MASUKKAN_LINK_MEDIAFIRE_GGMP",
+  },
+  {
+    name: "ggmp x ...",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "30 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "MASUKKAN_LINK_MEDIAFIRE_GGMP",
+  },
+  {
+    name: "ggmp x ...",
+    category: "APLIKASI GGMP",
+    image: "ggmp.jpg",
+    size: "30 MB",
+    platform: "Android",
+    developer: "Unknown",
+    download: "MASUKKAN_LINK_MEDIAFIRE_GGMP",
+  },
+
+  // ================= APP GAME =================
+  {
+    name: "MINICRAFT",
+    category: "APP GAME",
+    image: "minicraft.jpg",
+    size: "500 MB",
+    platform: "Android/pc",
+    version: "TERBARU",
+    developer: "MOJANG",
+    desc: "Mari berpetualang bersama game minicraft.",
+    download: "https://www.mediafire.com/file/e8yb6ux8sd6bhki/Minicraft_Gratis.apk/file",
+    // MENU TAMBAHAN: tambah link di bawah tombol Download Game.
+    // Salin baris { label: ..., url: ... } sebanyak yang kamu mau.
+    links: [
+    ]
+  },
+  {
+    name: "FreeFire Chrono 2020",
+    category: "APP GAME",
+    image: "ff 2020.jpg",
+    size: "677 MB",
+    platform: "Android/pc",
+    version: "Terbaru",
+    developer: "Garena",
+    desc: "Kolaborasi ikonik ini menjadi salah satu momen bersejarah dalam perjalanan Free Fire. Siap bernostalgia dengan event FF Chrono 2020?.",
+    download: "https://www.mediafire.com/file/uwhdzz7xj1dvebi/CHRONO+PROJECT_1.56.1.apk/file",
+    // MENU TAMBAHAN: tambah link di bawah tombol Download Game.
+    // Salin baris { label: ..., url: ... } sebanyak yang kamu mau.
+    links: [
+      { label: "Create account", url: "https://core.chronoprojects.com/chrono/register" }
+    ]
+  },
+  {
+    name: "Nama Game 3",
+    category: "APP GAME",
+    image: "",
+    size: "80 MB",
+    platform: "Android",
+    version: "1.3",
+    genre: "Puzzle",
+    developer: "Nama Developer",
+    update: "9 November 2026",
+    desc: "Tulis deskripsi singkat game di sini.",
+    download: "https://GANTI_LINK_DOWNLOAD_3",
+    // MENU TAMBAHAN: tambah link di bawah tombol Download Game.
+    // Salin baris { label: ..., url: ... } sebanyak yang kamu mau.
+    links: [
+      { label: "⬇ Download Link 2", url: "https://GANTI_LINK_TAMBAHAN_3" }
+    ]
+  }
+];
+
+const DETAIL_FIELDS = [
+  ["Nama Game", "name"],
+  ["Ukuran", "size"],
+  ["Platform", "platform"],
+  ["Versi", "version"],
+  ["Genre", "genre"],
+  ["Developer", "developer"],
+  ["Update Terakhir", "update"]
+];
+/* ============================================================
+   SELESAI — kode di bawah tidak perlu diubah
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+const bg = src => src ? `url('${src}')` : "linear-gradient(135deg,#3a3f5c,#1a1d27)";
+
+document.title = SITE_NAME;
+$("siteName").textContent = SITE_NAME;
+$("foot").textContent = "© " + new Date().getFullYear() + " " + SITE_NAME;
+$("waLink").href = WA_LINK;
+$("waHeader").href = WA_LINK;
+$("youtubeHeader").href = YOUTUBE_LINK;
+
+// Banner slider
+let cur = 0, timer;
+BANNERS.forEach((b, i) => {
+  const sl = document.createElement("div");
+  sl.className = "slide";
+  sl.style.backgroundImage = bg(b.image);
+  sl.innerHTML = "<div><h2></h2><p></p></div>";
+  sl.querySelector("h2").textContent = b.title || "";
+  sl.querySelector("p").textContent = b.sub || "";
+  $("track").appendChild(sl);
+  const d = document.createElement("i");
+  d.onclick = () => { go(i); play(); };
+  $("dots").appendChild(d);
+});
+function go(n){
+  cur = (n + BANNERS.length) % BANNERS.length;
+  $("track").style.transform = "translateX(-" + cur * 100 + "%)";
+  [...$("dots").children].forEach((d, k) => d.classList.toggle("on", k === cur));
+}
+function play(){ clearInterval(timer); if (BANNERS.length > 1) timer = setInterval(() => go(cur + 1), BANNER_DELAY); }
+let sx = null;
+$("slider").addEventListener("pointerdown", e => sx = e.clientX);
+$("slider").addEventListener("pointerup", e => {
+  if (sx !== null && Math.abs(e.clientX - sx) > 40) { go(cur + (e.clientX < sx ? 1 : -1)); play(); }
+  sx = null;
+});
+go(0); play();
+
+// Menu garis tiga
+function toggleMenu(open){
+  $("drawer").classList.toggle("open", open);
+  $("overlay").classList.toggle("open", open);
+}
+$("burger").onclick = () => toggleMenu(true);
+$("overlay").onclick = () => toggleMenu(false);
+
+// Daftar konten berdasarkan kategori menu
+let activeCategory = "APP GAME";
+function renderCategory(category){
+  activeCategory = category;
+  document.querySelectorAll(".category-nav button").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.category === category);
+  });
+  const grid = $("grid");
+  grid.innerHTML = "";
+  const items = GAMES.map((g, i) => ({...g, originalIndex:i}))
+    .filter(g => (g.category || "APP GAME") === category);
+  if(!items.length){
+    const empty = document.createElement("div");
+    empty.className = "empty-category";
+    empty.textContent = "Belum ada konten di kategori " + category + ". Tambahkan data di bagian GAMES pada kode HTML.";
+    grid.appendChild(empty);
+    return;
+  }
+  items.forEach(g => {
+    const c = document.createElement("div");
+    c.className = "card";
+    c.innerHTML = `<div class="img"></div><div class="t"><b></b><span></span><button>Detail</button></div>`;
+    c.querySelector(".img").style.backgroundImage = bg(g.image);
+    c.querySelector("b").textContent = g.name;
+    c.querySelector("span").textContent = (g.platform || "") + (g.size ? " • " + g.size : "");
+    c.onclick = () => showDetail(g.originalIndex);
+    grid.appendChild(c);
+  });
+}
+document.querySelectorAll(".category-nav button").forEach(btn => {
+  btn.addEventListener("click", () => renderCategory(btn.dataset.category));
+});
+renderCategory(activeCategory);
+
+function showDetail(i){
+  const g = GAMES[i];
+  $("dImg").style.backgroundImage = bg(g.image);
+  $("dName").textContent = g.name;
+  $("dTable").innerHTML = DETAIL_FIELDS
+    .filter(f => g[f[1]])
+    .map(f => `<tr><td>${f[0]}</td><td></td></tr>`).join("");
+  const rows = $("dTable").querySelectorAll("tr");
+  DETAIL_FIELDS.filter(f => g[f[1]]).forEach((f, k) => rows[k].children[1].textContent = g[f[1]]);
+  $("dDesc").textContent = g.desc || "";
+  $("dLink").href = g.download;
+  const ex = $("dExtra");
+  ex.innerHTML = "";
+  (g.links || []).forEach(l => {
+    if(!l || !l.url) return;
+    const a = document.createElement("a");
+    a.className = "extra";
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.href = l.url;
+    a.textContent = l.label || "Download";
+    ex.appendChild(a);
+  });
+  $("home").style.display = "none";
+  const d = $("detail");
+  d.style.display = "block";
+  // restart animasi
+  d.style.animation = "none";
+  void d.offsetWidth;
+  d.style.animation = "";
+  window.scrollTo(0, 0);
+}
+function showHome(){
+  $("detail").style.display = "none";
+  $("home").style.display = "block";
+  toggleMenu(false);
+  window.scrollTo(0, 0);
+}
+$("backBtn").onclick = showHome;
+$("homeBtn").onclick = showHome;
+$("siteName").onclick = showHome;
+</script>
+</body>
+</html>
